@@ -1,15 +1,35 @@
-FROM zricethezav/gitleaks:latest
-ARG VCS_REF
-ARG BUILD_DATE
-ARG VERSION
-ARG USER_EMAIL="david.alexandre@w6d.io"
-ARG USER_NAME="David ALEXANDRE"
-LABEL maintainer="${USER_NAME} <${USER_EMAIL}>" \
-        org.label-schema.vcs-ref=$VCS_REF \
-        org.label-schema.vcs-url="https://github.com/w6d-io/gitleaks" \
-        org.label-schema.build-date=$BUILD_DATE \
-        org.label-schema.version=$VERSION
+FROM golang:alpine as build
 
-ENV DESIRED_VERSION $DESIRED_VERSION
-COPY . .
-ENTRYPOINT ["gitleaks"]
+WORKDIR /build
+
+RUN true \
+	&& apk --no-cache add \
+		git
+
+RUN true \
+    && go get -u github.com/zricethezav/gitleaks
+
+# ---
+
+FROM opendevsecops/launcher:latest as launcher
+
+# ---
+
+FROM alpine:latest
+
+WORKDIR /run
+
+RUN true \
+	&& apk --no-cache add \
+		git \
+		openssh
+
+ADD configs configs
+
+COPY --from=build /go/bin/gitleaks /bin/gitleaks
+
+COPY --from=launcher /bin/launcher /bin/launcher
+
+WORKDIR /session
+
+ENTRYPOINT ["/bin/launcher", "/bin/gitleaks"]
