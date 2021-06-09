@@ -1,19 +1,50 @@
+.PHONY: test test-cover build release-builds
 
-IMG ?= w6dio/gitleaks:latest
+VERSION := `git fetch --tags && git tag | sort -V | tail -1`
+PKG=github.com/w6d-io/docker-gitleaks
+LDFLAGS=-ldflags "-X=github.com/w6d-io/docker-gitleaks/v7/version.Version=$(VERSION)"
+_LDFLAGS="github.com/w6d-io/docker-gitleaks/v7/version.Version=$(VERSION)"
+COVER=--cover --coverprofile=cover.out
 
+test-cover:
+	go test ./... --race $(COVER) $(PKG) -v
+	go tool cover -html=cover.out
 
-REF=$(shell git symbolic-ref --quiet HEAD 2> /dev/null)
-VERSION=$(shell basename $(REF) )
-VCS_REF=$(shell git rev-parse HEAD)
-BUILD_DATE=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
+format:
+	go fmt ./...
 
-all: build push
+test: format
+	go get golang.org/x/lint/golint
+	go vet ./...
+	golint ./...
+	go test ./... --race $(PKG) -v
 
-# Build the docker image
-build:
-	docker build  --build-arg=VERSION=${VERSION} --build-arg=VCS_REF=${VCS_REF} --build-arg=BUILD_DATE=${BUILD_DATE}  -t ${IMG} .
+build: format
+	golint ./...
+	go vet ./...
+	go mod tidy
+	go build $(LDFLAGS)
 
-# Push the docker image
-push:
-	docker push ${IMG}
+security-scan:
+	go get github.com/securego/gosec/cmd/gosec
+	gosec -no-fail ./...
 
+release-builds:
+	rm -rf build
+	mkdir build
+	env GOOS="windows" GOARCH="amd64" go build -o "build/gitleaks-windows-amd64.exe" $(LDFLAGS)
+	env GOOS="windows" GOARCH="386" go build -o "build/gitleaks-windows-386.exe" $(LDFLAGS)
+	env GOOS="linux" GOARCH="amd64" go build -o "build/gitleaks-linux-amd64" $(LDFLAGS)
+	env GOOS="linux" GOARCH="arm" go build -o "build/gitleaks-linux-arm" $(LDFLAGS)
+	env GOOS="linux" GOARCH="mips" go build -o "build/gitleaks-linux-mips" $(LDFLAGS)
+	env GOOS="linux" GOARCH="mips" go build -o "build/gitleaks-linux-mips" $(LDFLAGS)
+	env GOOS="darwin" GOARCH="amd64" go build -o "build/gitleaks-darwin-amd64" $(LDFLAGS)
+
+deploy:
+	@echo "$(DOCKER_PASSWORD)" | docker login -u "$(DOCKER_USERNAME)" --password-stdin
+	docker build --build-arg ldflags=$(_LDFLAGS) -f Dockerfile -t w6d-io/docker-gitleaks:latest -t w6d-io/docker-gitleaks:$(VERSION) .
+	echo "Pushing w6d-io/docker-gitleaks:$(VERSION) and w6d-io/docker-gitleaks:latest"
+	docker push w6d-io/docker-gitleaks
+
+dockerbuild:
+	docker build --build-arg ldflags=$(_LDFLAGS) -f Dockerfile -t w6d-io/docker-gitleaks:latest -t w6d-io/docker-gitleaks:$(VERSION) .
