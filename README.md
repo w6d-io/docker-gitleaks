@@ -290,3 +290,4 @@ These users are [sponsors](https://github.com/sponsors/zricethezav) of gitleaks:
 
 #### Logo Attribution
 The Gitleaks logo uses the Git Logo created <a href="https://twitter.com/jasonlong">Jason Long</a> is licensed under the <a href="https://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a>.
+test
