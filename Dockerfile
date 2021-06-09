@@ -11,3 +11,12 @@ LABEL maintainer="${USER_NAME} <${USER_EMAIL}>" \
         org.label-schema.version=$VERSION
 
 ENV DESIRED_VERSION $DESIRED_VERSION
+
+WORKDIR /go/src/github.com/zricethezav/gitleaks
+ARG ldflags
+COPY . .
+
+FROM alpine:3.11
+RUN apk add --no-cache bash git openssh
+ENTRYPOINT ["gitleaks"]
+
