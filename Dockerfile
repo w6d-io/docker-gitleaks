@@ -2,12 +2,9 @@ FROM golang:alpine as build
 
 WORKDIR /build
 
-RUN true \
-	&& apk --no-cache add \
-		git
+RUN true && apk --no-cache add git
 
-RUN true \
-    && go get -u github.com/zricethezav/gitleaks
+RUN true && GO111MODULE=on go get github.com/zricethezav/gitleaks/v7
 
 # ---
 
@@ -19,8 +16,7 @@ FROM alpine:latest
 
 WORKDIR /run
 
-RUN true \
-	&& apk --no-cache add \
+RUN true && apk --no-cache add \
 		git \
 		openssh
 
