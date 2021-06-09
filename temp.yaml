@@ -1,0 +1,20 @@
+[?1049h[>4;2m[?1h=[?2004h[1;15r[?12h[?12l[22;2t[22;1t[27m[29m[m[H[2J[?25l[15;1H"/var/folders/76/bmj8x7dx5rv_gt2v1rs0dhpw0000gp/T/kubectl-edit-1acfo.yaml" 25L, 1305C[1;1H# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: ci.w6d.io/v1alpha1
+kind: Step
+metadata:
+  annotations:
+    ci.w6d.io/kind: generic
+    ci.w6d.io/order: "0"
+    ci.w6d.io/task: git-leaks
+    kubectl.kubernetes.io/last-applied-configuration: |[13;7H{"apiVersion":"ci.w6d.io/v1alpha1","kind":"Step","metadata":{"annotations":{"ci.w6d.io/kind":"generic","ci.w6d.io/order":"0","ci.w66[14;1Hd.io/task":"git-leaks"},"name":"git-leaks-standard","namespace":"ci-system"},"step":{"image":"zricethezav/gitleaks:latest","name":"git-le[13;1H[94m@                                                                                                                                        [14;1H@                                                                                                                                        [1;1H[?25h[?25l[m[15;1HType  :qa  and press <Enter> to exit Vim[15;41H[K[1;1H[?25h[?25l[15;1HEntering Ex mode.  Type "visual" to go to Normal mode.[?25h
+:QQ
+:
+:
+:
+:
+:
+:q
+[?2004l[>4;m[23;2t[23;1t[?2004l[?1l>[>4;m[?1049l
