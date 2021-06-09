@@ -4,7 +4,8 @@ WORKDIR /build
 
 RUN apk --no-cache add git
 
-RUN GO111MODULE=on go get github.com/zricethezav/gitleaks/v7
+#RUN GO111MODULE=on go get github.com/zricethezav/gitleaks/v7i
+RUN GO111MODULE=on go get github.com/zricethezav/gitleaks/releases/tag/v7.5.0
 
 # ---
 
